@@ -7,9 +7,9 @@ const App = props => {
   // States
   const [personsState, setPersonsState] = useState({
     persons: [
-      { name: "Santiago", age: 24 },
-      { name: "Leonardo", age: 28 },
-      { name: "Santiaga", age: 27 }
+      { id: 'dsadsa' ,name: "Santiago", age: 24 },
+      { id: 'fdgsgd' ,name: "Leonardo", age: 28 },
+      { id: 'ytyerw' ,name: "Santiaga", age: 27 }
     ],
   });
 
@@ -22,24 +22,35 @@ const App = props => {
     }
   )
 
-  const switchNameHandler = newName => {
+  const deletePersonHandler = (personIndex) => {
+    const persons = [...personsState.persons];
+    persons.splice(personIndex, 1);
     setPersonsState({
-      persons: [
-        { name: newName, age: 30 },
-        { name: "Cristian", age: 28 },
-        { name: "Ivan Trolazo", age: 19 }
-      ]
-    });
-  };
+      persons: persons
+    })
+  }
 
-  const nameChangedHandler = event => {
-    setPersonsState({
-      persons: [
-        { name: "Santiago", age: 30 },
-        { name: event.target.value, age: 28 },
-        { name: "Ivan Trolazo", age: 19 }
-      ]
+  const nameChangedHandler = (event, id) => {
+    // We need to get the index of the person that is being edited, with the id given in the parameter
+    const personIndex = personsState.persons.findIndex( p => {
+      // Find the person if the id matches
+      return p.id === id;
     });
+
+    // The object person found will be the person according to the index previously found
+    const personFound = {
+      ...personsState.persons[personIndex]
+    }
+
+    // Get the name constantly from event given when the input changes
+    personFound.name = event.target.value;
+
+    // Get the unmutaded list of persons from the copy of the state
+    const persons = [...personsState.persons];
+    persons[personIndex] = personFound;
+
+    // Update the persons
+    setPersonsState({ persons: persons });
   };
 
   const togglePersonsHandler = () => {
@@ -73,9 +84,17 @@ const App = props => {
     persons = (
       <div>
         {
-          personsState.persons.map(person => {
-            return <Person name={person.name} age={person.age} />
-          })
+          personsState.persons.map((person, index) => {
+            return (
+              <Person 
+              name={person.name} 
+              age={person.age} 
+              click={() => deletePersonHandler(index)}
+              key={person.id}
+              changed={(event) => nameChangedHandler(event, person.id)}/>
+            )
+          }
+          )
         }
       </div>
     )
@@ -97,19 +116,6 @@ const App = props => {
       }
       <br></br>
       {persons}
-      {/* <div>
-          <Person
-            name={personsState.persons[0].name}
-            age={personsState.persons[0].age} />
-          <Person
-            name={personsState.persons[1].name}
-            age={personsState.persons[1].age}
-            onClick={switchNameHandler.bind(this, "Santiago")}
-            changed={nameChangedHandler} > My Hobbies: Racing </Person>
-          <Person
-            name={personsState.persons[2].name}
-            age={personsState.persons[2].age} />
-        </div> */}
     </div>
   );
 };
