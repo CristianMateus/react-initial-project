@@ -1,136 +1,107 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 import "./App.css";
+import Radium from "radium";
 import Person from "./Person/Person";
 
-const App = props => {
-  
-  const style = {
-    backgroundColor: 'green',
-    color: 'white',
-    font: 'inherit',
-    border: '1px solid blue',
-    padding: '8px',
-    cursor: 'pointer'
-  };
-
-  // States
-  const [personsState, setPersonsState] = useState({
+class App extends Component {
+  state = {
     persons: [
-      { id: 'dsadsa' ,name: "Santiago", age: 24 },
-      { id: 'fdgsgd' ,name: "Leonardo", age: 28 },
-      { id: 'ytyerw' ,name: "Santiaga", age: 27 }
+      { id: 'asfa1', name: 'Max', age: 28 },
+      { id: 'vasdf1', name: 'Manu', age: 29 },
+      { id: 'asdf11', name: 'Stephanie', age: 26 }
     ],
-  });
-  
-  const [showPersonsState, setShowPersonsState] = useState({ showPersons: false })
-  
-  const [imageState, setImageState] = useState(
-    {
-      imageUrl: '',
-      showImage: false
-    }
-  )
-
-  const deletePersonHandler = (personIndex) => {
-    const persons = [...personsState.persons];
-    persons.splice(personIndex, 1);
-    setPersonsState({
-      persons: persons
-    })
+    otherState: 'some other value',
+    showPersons: false
   }
 
-  const nameChangedHandler = (event, id) => {
-    // We need to get the index of the person that is being edited, with the id given in the parameter
-    const personIndex = personsState.persons.findIndex( p => {
-      // Find the person if the id matches
+  nameChangedHandler = ( event, id ) => {
+    const personIndex = this.state.persons.findIndex( p => {
       return p.id === id;
-    });
+    } );
 
-    // The object person found will be the person according to the index previously found
-    const personFound = {
-      ...personsState.persons[personIndex]
+    const person = {
+      ...this.state.persons[personIndex]
+    };
+
+    // const person = Object.assign({}, this.state.persons[personIndex]);
+
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState( { persons: persons } );
+  }
+
+  deletePersonHandler = ( personIndex ) => {
+    // const persons = this.state.persons.slice();
+    const persons = [...this.state.persons];
+    persons.splice( personIndex, 1 );
+    this.setState( { persons: persons } );
+  }
+
+  togglePersonsHandler = () => {
+    const doesShow = this.state.showPersons;
+    this.setState( { showPersons: !doesShow } );
+  }
+
+  render () {
+    const style = {
+      backgroundColor: 'green',
+      color: 'white',
+      font: 'inherit',
+      border: '1px solid blue',
+      padding: '8px',
+      cursor: 'pointer',
+      ':hover': {
+        backgroundColor: 'lightgreen',
+        color: 'black'
+      }
+    };
+
+    let persons = null;
+
+    if ( this.state.showPersons ) {
+      persons = (
+        <div>
+          {this.state.persons.map( ( person, index ) => {
+            return <Person
+              click={() => this.deletePersonHandler( index )}
+              name={person.name}
+              age={person.age}
+              key={person.id}
+              changed={( event ) => this.nameChangedHandler( event, person.id )} />
+          } )}
+        </div>
+      );
+
+      style.backgroundColor = 'red';
+      style[':hover'] = {
+        backgroundColor: 'salmon',
+        color: 'black'
+      };
     }
 
-    // Get the name constantly from event given when the input changes
-    personFound.name = event.target.value;
+    const classes = [];
+    if ( this.state.persons.length <= 2 ) {
+      classes.push( 'red' ); // classes = ['red']
+    }
+    if ( this.state.persons.length <= 1 ) {
+      classes.push( 'bold' ); // classes = ['red', 'bold']
+    }
 
-    // Get the unmutaded list of persons from the copy of the state
-    const persons = [...personsState.persons];
-    persons[personIndex] = personFound;
-
-    // Update the persons
-    setPersonsState({ persons: persons });
-  };
-
-  const togglePersonsHandler = () => {
-    const doesShow = showPersonsState.showPersons;
-    setShowPersonsState({
-      showPersons: !doesShow,
-    })
-    const doesShowImage = imageState.showImage;
-    setImageState({
-      imageUrl: 'https://cdn140.picsart.com/293050368051211.png?r1024x1024',
-      showImage: !doesShowImage
-    })
-
-  }
-
-
-  const imageStyle = {
-    'width': '10em',
-    'height': '10em'
-  }
-
-  let persons = null;
-
-  if (showPersonsState.showPersons) {
-    persons = (
-      <div>
-        {
-          personsState.persons.map((person, index) => {
-            return (
-              <Person 
-              name={person.name} 
-              age={person.age} 
-              click={() => deletePersonHandler(index)}
-              key={person.id}
-              changed={(event) => nameChangedHandler(event, person.id)}/>
-            )
-          }
-          )
-        }
-      </div>
+    return (
+        <div className="App">
+          <h1>Hi, I'm a React App</h1>
+          <p className={classes.join( ' ' )}>This is really working!</p>
+          <button
+            style={style}
+            onClick={this.togglePersonsHandler}>Toggle Persons</button>
+          {persons}
+        </div>
     );
-    style.backgroundColor = 'red'
+    // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Does this work now?'));
   }
+}
 
-  let classes = []
-
-  if(personsState.persons.length <= 2){
-    classes.push('red');
-  }
-  if(personsState.persons.length <= 1){
-    classes.push('bold');
-  }
-
-  return (
-    <div className="App">
-      <h1>New App</h1>
-      <p className={classes.join(' ')}>This is really working</p>
-      <button
-        style={style}
-        onClick={togglePersonsHandler}>
-        Switch Name
-      </button>
-      <br></br>
-      {imageState.showImage === true ?
-        <img src={imageState.imageUrl} alt={"logo"} style={imageStyle}></img>
-        : null
-      }
-      <br></br>
-      {persons}
-    </div>
-  );
-};
-
-export default App;
+export default Radium( App );
