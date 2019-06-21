@@ -3,6 +3,15 @@ import "./App.css";
 import Person from "./Person/Person";
 
 const App = props => {
+  
+  const style = {
+    backgroundColor: 'green',
+    color: 'white',
+    font: 'inherit',
+    border: '1px solid blue',
+    padding: '8px',
+    cursor: 'pointer'
+  };
 
   // States
   const [personsState, setPersonsState] = useState({
@@ -12,9 +21,9 @@ const App = props => {
       { id: 'ytyerw' ,name: "Santiaga", age: 27 }
     ],
   });
-
+  
   const [showPersonsState, setShowPersonsState] = useState({ showPersons: false })
-
+  
   const [imageState, setImageState] = useState(
     {
       imageUrl: '',
@@ -63,15 +72,9 @@ const App = props => {
       imageUrl: 'https://cdn140.picsart.com/293050368051211.png?r1024x1024',
       showImage: !doesShowImage
     })
+
   }
 
-  const style = {
-    'backgroundColor': 'lightgreen',
-    'font': 'inherit',
-    'border': '1px solid blue',
-    'padding': '8px',
-    'cursor': 'pointer'
-  };
 
   const imageStyle = {
     'width': '10em',
@@ -97,13 +100,23 @@ const App = props => {
           )
         }
       </div>
-    )
+    );
+    style.backgroundColor = 'red'
+  }
+
+  let classes = []
+
+  if(personsState.persons.length <= 2){
+    classes.push('red');
+  }
+  if(personsState.persons.length <= 1){
+    classes.push('bold');
   }
 
   return (
     <div className="App">
       <h1>New App</h1>
-      <p>This is really working</p>
+      <p className={classes.join(' ')}>This is really working</p>
       <button
         style={style}
         onClick={togglePersonsHandler}>
