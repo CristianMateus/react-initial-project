@@ -2,13 +2,12 @@ import React, { Component } from "react";
 import classes from "./App.css";
 import Radium from "radium";
 import Persons from "../components/Persons/Persons";
-import Cockpit from '../components/Cockpit/Cockpit';
+import Cockpit from "../components/Cockpit/Cockpit";
 
 class App extends Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
-    console.log('[App.js] constructor')
+    console.log("[App.js] constructor");
   }
   state = {
     persons: [
@@ -17,7 +16,8 @@ class App extends Component {
       { id: "asdf11", name: "Stephanie", age: 26 }
     ],
     otherState: "some other value",
-    showPersons: false
+    showPersons: false,
+    showCockpit: true
   };
 
   // static getDerivedStateFromProps(props, state){
@@ -29,10 +29,14 @@ class App extends Component {
   //   console.log('[App.js] componentDidMount')
   // }
 
-  // shouldComponentUpdate(nextProps, nextState){
-  //   console.log('[App.js] shouldComponentUpdate')
-  //   return true;
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("[App.js] shouldComponentUpdate");
+    if (nextProps.persons !== this.props.persons) {
+      return true;
+    } else {
+      return true;
+    }
+  }
 
   // componentDidUpdate(){
   //   console.log('[App.js] componentDidUpdate')
@@ -70,7 +74,7 @@ class App extends Component {
   };
 
   render() {
-    console.log('[App.js] rendered')
+    console.log("[App.js] rendered");
 
     let persons = null;
 
@@ -88,11 +92,22 @@ class App extends Component {
 
     return (
       <div className={classes.App}>
-        <Cockpit 
-        title = {this.props.appTitle}
-        togglePersonsHandler = {this.togglePersonsHandler}
-        showPersons = {this.state.showPersons}
-        persons = {this.state.persons}/>
+        <button
+          onClick={() => {
+            let hideCockpit = this.state.showCockpit;
+            this.setState({ showCockpit: !hideCockpit });
+          }}
+        >
+          Remove Cockpit
+        </button>
+        {this.state.showCockpit ? (
+          <Cockpit
+            title={this.props.appTitle}
+            togglePersonsHandler={this.togglePersonsHandler}
+            showPersons={this.state.showPersons}
+            personsLenght={this.state.persons.length}
+          />
+        ) : null}
         {persons}
       </div>
     );
