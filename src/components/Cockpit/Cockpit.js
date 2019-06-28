@@ -1,26 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import classes from "./Cockpit.css";
 
-const Cockpit = (props) => {
+// Context
+import AuthContext from "../../context/auth-context";
+
+const Cockpit = props => {
+  const toggleBtnClick = useRef();
+  const authContext = useContext(AuthContext)
+
+  console.log(authContext.authenticated)
 
   useEffect(() => {
-    console.log('[Cockpit.js] 1. rendered useEffect...')
+    console.log("[Cockpit.js] 1. rendered useEffect...");
     // Http Request
-    const timer = setTimeout(() => {
-      alert("Saved data to cloud")
-    }, 1000);
+    // const timer = setTimeout(() => {
+    //   alert("Saved data to cloud")
+    // }, 1000);
+    toggleBtnClick.current.click();
     return () => {
-      clearTimeout(timer)
-      console.log('[Cockpit.js] cleanup work in first use effect')
-    }
-  }, [])
+      console.log("[Cockpit.js] cleanup work in first use effect");
+    };
+  }, []);
 
   useEffect(() => {
-    console.log('[Cockpit.js] 2. rendered useEffect')
+    console.log("[Cockpit.js] 2. rendered useEffect");
     return () => {
-      console.log('[Cockpit.js] cleanup work in second useEffect')
-    }
-  })
+      console.log("[Cockpit.js] cleanup work in second useEffect");
+    };
+  });
 
   const assignedClasses = [];
   let buttonClass = "";
@@ -40,9 +47,14 @@ const Cockpit = (props) => {
     <div className={classes.Cockpit}>
       <h1>{props.title}</h1>
       <p className={assignedClasses.join(" ")}>This is really working!</p>
-      <button className={buttonClass} onClick={props.togglePersonsHandler}>
+      <button
+        ref={toggleBtnClick}
+        className={buttonClass}
+        onClick={props.togglePersonsHandler}
+      >
         Toggle Persons
       </button>
+        <button onClick={authContext.login}>Log In</button>
     </div>
   );
 };
